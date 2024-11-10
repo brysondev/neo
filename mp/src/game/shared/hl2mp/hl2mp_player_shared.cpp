@@ -143,4 +143,9 @@ void CHL2MP_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, f
 	ep.m_pOrigin = &vecOrigin;
 
 	EmitSound( filter, entindex(), ep );
+#ifdef NEO
+#ifdef GAME_DLL
+	CSoundEnt::InsertSound(SOUND_COMBAT, vecOrigin, 180.0f, 3.0f, this, SOUNDENT_CHANNEL_NPC_FOOTSTEP);
+#endif // GAME_DLL
+#endif // NEO
 }

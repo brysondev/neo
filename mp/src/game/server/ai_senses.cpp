@@ -131,6 +131,14 @@ void CAI_Senses::Listen( void )
 
 			if ( pCurrentSound	&& (iSoundMask & pCurrentSound->SoundType()) && CanHearSound( pCurrentSound ) )
 			{
+#ifdef NEO
+				// the npc ignores sounds coming from their team mates
+				if (pCurrentSound->m_bHasOwner && EntityFromEntityHandle(pCurrentSound->m_hOwner)->GetTeamNumber() == GetCharacter()->GetTeamNumber())
+				{
+					iSound = pCurrentSound->NextSound();
+					continue;
+				}
+#endif // NEO
 	 			// the npc cares about this sound, and it's close enough to hear.
 				pCurrentSound->m_iNextAudible = m_iAudibleList;
 				m_iAudibleList = iSound;
