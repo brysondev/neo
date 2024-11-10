@@ -311,7 +311,11 @@ void CBot::GatherWeaponConditions()
     // Primary ammunition
     {
         int ammo = 0;
+#ifdef NEO
+        int totalAmmo = GetHost()->GetActiveWeapon()->GetPrimaryAmmoCount();
+#else
         int totalAmmo = GetHost()->GetAmmoCount( pWeapon->GetPrimaryAmmoType() );
+#endif
         int totalRange = 30;
 
         if ( pWeapon->UsesClipsForAmmo1() ) {
@@ -334,7 +338,11 @@ void CBot::GatherWeaponConditions()
     // Secondary ammunition
     {
         int ammo = 0;
+#ifdef NEO
+        int totalAmmo = GetHost()->GetActiveWeapon()->GetSecondaryAmmoCount();
+#else
         int totalAmmo = GetHost()->GetAmmoCount( pWeapon->GetSecondaryAmmoType() );
+#endif
         int totalRange = 15;
 
         if ( pWeapon->UsesClipsForAmmo2() ) {

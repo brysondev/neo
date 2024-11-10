@@ -889,10 +889,10 @@ void CBotDecision::SwitchToBestWeapon()
 {
     CBaseWeapon *pCurrent = GetHost()->GetActiveBaseWeapon();
 
+#ifndef NEO
     if ( pCurrent == NULL )
         return;
 
-#ifndef NEO
     // Best Weapons
     CBaseWeapon *pPistol = NULL;
     CBaseWeapon *pSniper = NULL;
@@ -984,13 +984,15 @@ void CBotDecision::SwitchToBestWeapon()
     // We always change to our best available weapon while 
     // we are doing nothing or we run out of ammunition.
     if ( IsIdle() || !pCurrent->HasAnyAmmo() ) {
+#else
+    if (IsIdle() || !pCurrent || !pCurrent->HasAnyAmmo()) {
+#endif // NEO
         CBaseWeapon *pBest = dynamic_cast<CBaseWeapon *>( TheGameRules->GetNextBestWeapon( GetHost(), NULL ) );
 
         if ( pBest != pCurrent ) {
             GetHost()->Weapon_Switch( pBest );
         }
     }
-#endif // NEO
 }
 
 //================================================================================
