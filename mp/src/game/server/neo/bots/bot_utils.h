@@ -87,6 +87,16 @@ public:
         return m_vecLastPosition;
     }
 
+#ifdef NEO
+    virtual const bool GetVisitedLastKnownPosition() const {
+        return m_bVisitedLastKnownPosition;
+    }
+
+    virtual void SetVisitedLastKnownPosition(bool visited) {
+        m_bVisitedLastKnownPosition = visited;
+    }
+#endif // NEO
+
     virtual const Vector GetIdealPosition() const {
         return m_vecIdealPosition;
     }
@@ -153,6 +163,9 @@ protected:
     IBot *m_pBot;
 
     Vector m_vecLastPosition;
+#ifdef NEO
+    bool m_bVisitedLastKnownPosition;
+#endif // NEO
     Vector m_vecIdealPosition;
 
     HitboxPositions m_Hitbox;

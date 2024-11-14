@@ -133,7 +133,7 @@ void CAI_Senses::Listen( void )
 			{
 #ifdef NEO
 				// the npc ignores sounds coming from their team mates
-				if (pCurrentSound->m_bHasOwner && EntityFromEntityHandle(pCurrentSound->m_hOwner)->GetTeamNumber() == GetCharacter()->GetTeamNumber())
+				if (pCurrentSound->m_hOwner && EntityFromEntityHandle(pCurrentSound->m_hOwner)->GetTeamNumber() == GetCharacter()->GetTeamNumber())
 				{
 					iSound = pCurrentSound->NextSound();
 					continue;

@@ -101,6 +101,10 @@ void CBot::SetUpSchedules()
     ADD_COMPONENT( CMoveAsideSchedule );
     ADD_COMPONENT( CCallBackupSchedule );
     ADD_COMPONENT( CDefendSpawnSchedule );
+#ifdef NEO
+    ADD_COMPONENT( CCaptureGhostSchedule );
+    ADD_COMPONENT( CDefendCapturePointSchedule );
+#endif // NEO
     //ADD_COMPONENT( CInvestigateLocationSchedule ); // TODO: Finish
 
 #ifdef INSOURCE_DLL
@@ -414,6 +418,9 @@ void CBot::GatherEnemyConditions()
     }
     else {
         SetCondition( BCOND_SEE_ENEMY );
+#ifdef NEO
+        memory->SetVisitedLastKnownPosition(false);
+#endif // NEO
 
         CBaseEntity *pBlockedBy = NULL;
 

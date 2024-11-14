@@ -29,6 +29,7 @@
 #include "neo_player.h"
 #include "neo_player_shared.h"
 #include "weapon_neobasecombatweapon.h"
+#include "neo_gamerules.h"
 #endif
 // The Bots were developed for Source Engine modification codename "InSource". (INSOURCE_DLL)
 // https://github.com/WootsMX/InSource
@@ -432,6 +433,11 @@ enum
     SCHEDULE_WANDER,
 #endif
 
+#ifdef NEO
+    SCHEDULE_CAPTURE_GHOST,
+    SCHEDULE_DEFEND_CAPTURE_POINT,
+#endif // NEO
+
     LAST_BOT_SCHEDULE
 };
 
@@ -508,10 +514,17 @@ enum
 
 	BTASK_CALL_FOR_BACKUP,              // Request reinforcements (TODO)
 
+#ifdef NEO
+    BTASK_MOVETO_GHOST,
+    BTASK_PICKUP_GHOST,
+    BTASK_DELIVER_GHOST,
+    BTASK_DEFEND_GHOST_CAP,
+#endif // NEO
+
     BTASK_SET_FAIL_SCHEDULE,            // If the schedule fails, the indicated schedule will run
     BTASK_SET_SCHEDULE,                 // Running the specified schedule at the end of the active
-
-	BLAST_TASK,
+	
+    BLAST_TASK,
 
 	BCUSTOM_TASK = 999
 };

@@ -243,6 +243,36 @@ public:
         return BOT_DESIRE_NONE;
     }
 };
+#ifdef NEO
+
+class CCaptureGhostSchedule : public IBotSchedule
+{
+public:
+    DECLARE_CLASS_GAMEROOT(CCaptureGhostSchedule, IBotSchedule);
+    DECLARE_SCHEDULE(SCHEDULE_CAPTURE_GHOST);
+
+    CCaptureGhostSchedule(IBot* bot) : BaseClass(bot)
+    {
+    }
+
+public:
+    virtual float GetDesire() const;
+};
+
+class CDefendCapturePointSchedule : public IBotSchedule
+{
+public:
+    DECLARE_CLASS_GAMEROOT(CDefendCapturePointSchedule, IBotSchedule);
+    DECLARE_SCHEDULE(SCHEDULE_DEFEND_CAPTURE_POINT);
+
+    CDefendCapturePointSchedule(IBot* bot) : BaseClass(bot)
+    {
+    }
+
+public:
+    virtual float GetDesire() const;
+};
+#endif // NEO
 
 //================================================================================
 // Defender el punto de aparici�n

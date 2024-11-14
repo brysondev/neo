@@ -15,10 +15,6 @@
 #include "../in_utils.h"
 #endif
 
-#ifdef NEO
-#include "neo_gamerules.h"
-#endif // NEO
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 

@@ -3557,6 +3557,31 @@ float CNEORules::GetRemainingPreRoundFreezeTime(const bool clampToZero) const
 	}
 }
 
+#ifdef GAME_DLL
+Vector CNEORules::GetClosestGhosterTeamCapPos() const
+{
+	const int ghosterTeam = GetGhosterTeam();
+	Vector ghostPos = GetGhostPos();
+	Vector closestCapPos;
+	float distToClosestCapPos = FLT_MAX;
+	for (int i = 0; i < m_pGhostCaps.Count(); i++)
+	{
+		auto pGhostCap = dynamic_cast<CNEOGhostCapturePoint*>(UTIL_EntityByIndex(m_pGhostCaps[i]));
+		if (!pGhostCap) { continue; }
+
+		if (pGhostCap->owningTeamAlternate() != ghosterTeam) { continue; }
+
+		float distToCapPos = pGhostCap->GetAbsOrigin().DistToSqr(ghostPos);
+		if (distToCapPos >= distToClosestCapPos) { continue; }
+
+		distToClosestCapPos = distToCapPos;
+		closestCapPos = pGhostCap->GetAbsOrigin();
+	}
+
+	return closestCapPos;
+}
+#endif // GAME_DLL
+
 const char *CNEORules::GetTeamClantag(const int iTeamNum) const
 {
 	switch (iTeamNum)
