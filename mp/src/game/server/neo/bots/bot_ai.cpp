@@ -101,6 +101,10 @@ void CBot::SetUpSchedules()
     ADD_COMPONENT( CMoveAsideSchedule );
     ADD_COMPONENT( CCallBackupSchedule );
     ADD_COMPONENT( CDefendSpawnSchedule );
+#ifdef NEO
+    ADD_COMPONENT( CCaptureGhostSchedule );
+    ADD_COMPONENT( CDefendCapturePointSchedule );
+#endif // NEO
     //ADD_COMPONENT( CInvestigateLocationSchedule ); // TODO: Finish
 
 #ifdef INSOURCE_DLL
@@ -311,7 +315,11 @@ void CBot::GatherWeaponConditions()
     // Primary ammunition
     {
         int ammo = 0;
+#ifdef NEO
+        int totalAmmo = GetHost()->GetActiveWeapon()->GetPrimaryAmmoCount();
+#else
         int totalAmmo = GetHost()->GetAmmoCount( pWeapon->GetPrimaryAmmoType() );
+#endif
         int totalRange = 30;
 
         if ( pWeapon->UsesClipsForAmmo1() ) {
@@ -334,7 +342,11 @@ void CBot::GatherWeaponConditions()
     // Secondary ammunition
     {
         int ammo = 0;
+#ifdef NEO
+        int totalAmmo = GetHost()->GetActiveWeapon()->GetSecondaryAmmoCount();
+#else
         int totalAmmo = GetHost()->GetAmmoCount( pWeapon->GetSecondaryAmmoType() );
+#endif
         int totalRange = 15;
 
         if ( pWeapon->UsesClipsForAmmo2() ) {
@@ -406,6 +418,9 @@ void CBot::GatherEnemyConditions()
     }
     else {
         SetCondition( BCOND_SEE_ENEMY );
+#ifdef NEO
+        memory->SetVisitedLastKnownPosition(false);
+#endif // NEO
 
         CBaseEntity *pBlockedBy = NULL;
 

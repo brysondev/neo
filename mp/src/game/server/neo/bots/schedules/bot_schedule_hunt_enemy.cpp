@@ -76,6 +76,11 @@ float CHuntEnemySchedule::GetDesire() const
     if ( memory == NULL )
         return BOT_DESIRE_NONE;
 
+#ifdef NEO
+    if (HasCondition(BCOND_ENEMY_LOST) && memory->GetVisitedLastKnownPosition())
+        return BOT_DESIRE_NONE;
+#endif // NEO
+
     // We have no vision of the enemy
     if ( HasCondition( BCOND_ENEMY_LOST ) ) {
         // But we have a vision of his last position and we are close

@@ -1393,8 +1393,10 @@ target_sources_grouped(
     neo/bots/interfaces/ibotvision.h
     neo/bots/interfaces/improv.h
     neo/bots/schedules/bot_schedule_call_backup.cpp
+    neo/bots/schedules/bot_schedule_capture_ghost.cpp
     neo/bots/schedules/bot_schedule_change_weapon.cpp
     neo/bots/schedules/bot_schedule_cover.cpp
+    neo/bots/schedules/bot_schedule_defend_capture_point.cpp
     neo/bots/schedules/bot_schedule_defend_spawn.cpp
     neo/bots/schedules/bot_schedule_help_dejected_friend.cpp
     neo/bots/schedules/bot_schedule_hide_and_heal.cpp

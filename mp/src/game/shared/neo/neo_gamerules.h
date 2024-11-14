@@ -293,6 +293,9 @@ public:
 	int GetGhosterPlayer() const { return m_iGhosterPlayer; }
 	bool GhostExists() const { return m_bGhostExists; }
 	Vector GetGhostPos() const { return m_vecGhostMarkerPos; }
+#ifdef GAME_DLL
+	Vector GetClosestGhosterTeamCapPos() const;
+#endif // GAME_DLL
 
 	int GetOpposingTeam(const int team) const
 	{

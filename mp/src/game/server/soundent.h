@@ -142,8 +142,11 @@ private:
 	int		m_ownerChannelIndex;
 
 	Vector	m_vecOrigin;	// sound's location in space
-
+#ifdef NEO
+public:
 	bool	m_bHasOwner;	// Lets us know if this sound was created with an owner. In case the owner goes null.
+private:
+#endif // NEO
 
 #ifdef DEBUG
 	int		m_iMyIndex;		// debugging

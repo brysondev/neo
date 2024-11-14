@@ -1944,7 +1944,11 @@ void CBaseCombatWeapon::WeaponSound( WeaponSound_t sound_type, float soundtime /
 			EmitSound( filter, GetOwner()->entindex(), shootsound, NULL, soundtime ); 
 
 #if !defined( CLIENT_DLL )
+#ifdef NEO
+			if (sound_type != EMPTY)
+#else
 			if( sound_type == EMPTY )
+#endif // NEO
 			{
 				CSoundEnt::InsertSound( SOUND_COMBAT, GetOwner()->GetAbsOrigin(), SOUNDENT_VOLUME_EMPTY, 0.2, GetOwner() );
 			}
