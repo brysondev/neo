@@ -15,6 +15,10 @@
 
 #include "in_buttons.h"
 
+#ifdef NEO
+#include "neo_gamerules.h"
+#endif // NEO
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -566,6 +570,82 @@ void IBotSchedule::TaskStart()
             TaskComplete();
             break;
         }
+#ifdef NEO
+        case BTASK_MOVETO_GHOST:
+        {
+            if (!GetLocomotion()) {
+                Fail("Move to ghost: Without Locomotion");
+                return;
+            }
+
+            if (!TheGameRules->GhostExists())
+            {
+                Fail("Move to ghost: Ghost doesn't exist");
+                return;
+            }
+            break;
+        }
+
+        case BTASK_PICKUP_GHOST:
+        {
+            if (TheGameRules->GetGhosterTeam() == GetHost()->GetTeamNumber())
+            {
+                TaskComplete();
+            }
+
+            if (TheGameRules->IsRoundOver())
+            {
+                Fail("Pickup ghost: Round is over");
+                return;
+            }
+
+            if (!GetLocomotion()) {
+                Fail("Pickup ghost: Without Locomotion");
+                return;
+            }
+
+            if (!TheGameRules->GhostExists())
+            {
+                Fail("Pickup ghost: Ghost doesn't exist");
+                return;
+            }
+
+            break;
+        }
+
+        case BTASK_DELIVER_GHOST:
+        {
+            if (TheGameRules->GetGhosterTeam() != GetHost()->GetTeamNumber())
+            {
+                Fail("Deliver ghost: Don't own ghost");
+                return;
+            }
+
+            if (!GetLocomotion()) {
+                Fail("Deliver ghost: Without Locomotion");
+                return;
+            }
+
+            if (!TheGameRules->GhostExists())
+            {
+                Fail("Deliver ghost: Ghost doesn't exist");
+                return;
+            }
+
+            break;
+        }
+
+        case BTASK_DEFEND_GHOST_CAP:
+        {
+            if (!GetLocomotion()) {
+                Fail("DeliverGhost: Without Locomotion");
+                return;
+            }
+
+            // This can be used to defend against vip too, don't check if ghost exists
+            break;
+        }
+#endif // NEO
 
         case BTASK_SET_FAIL_SCHEDULE:
         {
@@ -767,6 +847,9 @@ void IBotSchedule::TaskRun()
             }
 
             if ( completed ) {
+#ifdef NEO
+                memory->SetVisitedLastKnownPosition(true);
+#endif // NEO
                 TaskComplete();
                 return;
             }
@@ -836,6 +919,115 @@ void IBotSchedule::TaskRun()
 
             break;
         }
+#ifdef NEO
+        case BTASK_MOVETO_GHOST:
+        {
+            // We want to be close to the ghost
+            constexpr float tolerance = 100.f;
+            constexpr float toleranceSquared = 10000.f;
+            Vector ghostPosition = CNEORules().GetGhostPos();
+            float distance = ghostPosition.DistToSqr(GetAbsOrigin());
+
+            if (distance < toleranceSquared)
+            {
+                TaskComplete();
+                return;
+            }
+
+            GetLocomotion()->DriveTo("Move to ghost", ghostPosition, PRIORITY_HIGH, tolerance);            
+            break;
+        }
+
+        case BTASK_PICKUP_GHOST:
+        {
+            if (TheGameRules->IsRoundOver())
+            {
+                Fail("Pickup Ghost: Round is over");
+                return;
+            }
+
+            if (TheGameRules->GetGhosterTeam() == GetHost()->GetTeamNumber())
+            {
+                TaskComplete();
+                return;
+            }
+
+            // We want to be in range of the ghost so we can pick it up, use a very low tolerance
+            constexpr float tolerance = 64.f;
+            constexpr float toleranceSquared = 4096.f;
+            Vector ghostPosition = TheGameRules->GetGhostPos();
+            float distance = ghostPosition.DistToSqr(GetAbsOrigin());
+
+            if (distance > toleranceSquared)
+            {
+                GetLocomotion()->DriveTo("Move close to ghost", ghostPosition, PRIORITY_HIGH, tolerance);
+                return;
+            }
+
+            Vector lookDirection = GetHost()->EyeDirection3D(); // Already normalised
+            Vector eyeToGhostDirection = (ghostPosition - GetHost()->EyePosition()).Normalized();
+            float dotProduct = DotProduct(lookDirection, eyeToGhostDirection);
+            if (dotProduct <= 0.95f)
+            {
+                GetVision()->LookAt("Look at ghost", ghostPosition, PRIORITY_CRITICAL, 0.5f);
+                return;
+            }
+
+            InjectButton(IN_USE);
+            break;
+        }
+
+        case BTASK_DELIVER_GHOST:
+        {
+            constexpr float tolerance = 64.f;
+            constexpr float toleranceSquared = 4096.f;
+            Vector ghostCapPosition = TheGameRules->GetClosestGhosterTeamCapPos();
+            float distance = ghostCapPosition.DistToSqr(GetAbsOrigin());
+
+            if (distance < toleranceSquared)
+            {
+                TaskComplete();
+                return;
+            }
+
+            if (TheGameRules->GetGhosterTeam() != GetHost()->GetTeamNumber())
+            { // We don't own the ghost
+                Fail("Deliver Ghost: Team doesn't own ghost");
+                return;
+            }
+
+            //if (TheGameRules->GetGhosterPlayer() == GetHost()->entindex()) // NEO TODO (Adam) different behaviour for ghost carrier versus other members of the team
+            { // We are the ghost carrier
+                GetLocomotion()->DriveTo("Move close to ghost capture point", ghostCapPosition, PRIORITY_HIGH, tolerance);
+                return;
+            }
+
+            break;
+        }
+
+        case BTASK_DEFEND_GHOST_CAP:
+        {
+            constexpr float tolerance = 4096.f; // 64 squared
+            Vector ghostCapPosition = TheGameRules->GetClosestGhosterTeamCapPos();
+            float distance = ghostCapPosition.DistToSqr(GetAbsOrigin());
+
+            if (distance < tolerance)
+            {
+                TaskComplete();
+                return;
+            }
+
+            if (TheGameRules->GhostExists())
+            {
+                GetLocomotion()->DriveTo("Move close to ghost", ghostCapPosition, PRIORITY_HIGH, 1.f);
+                return;
+            }
+
+            // if (TheGameRules->VIPExists()) {}
+            Fail("Defend ghost cap: Ghost doesn't exist");
+            break;
+        }
+#endif // NEO
 
         default:
         {
