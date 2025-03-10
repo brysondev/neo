@@ -22,7 +22,7 @@ jobs:
 
       matrix:
         platform:
-        - { display_name: 'Linux Native Libraries', os: ubuntu-24.04, preset_os: linux }
+        - { display_name: 'Linux Native Libraries', os: ubuntu-22.04, preset_os: linux }
         - { display_name: 'Windows Native Libraries', os: windows-latest, preset_os: windows }
 
         preset_build_type:
@@ -45,7 +45,7 @@ jobs:
         echo "preset_name=$preset_name" >> "$GITHUB_ENV"
 
     - name: Install packages
-      if: ${{ matrix.platform.os == 'ubuntu-24.04' }}
+      if: ${{ matrix.platform.os == 'ubuntu-22.04' }}
       run: |
         sudo apt update
         sudo apt install libstdc++6 gcc g++ ninja-build -y
@@ -206,7 +206,7 @@ jobs:
     name: Upload Latest Build
 
     needs: [build, pack-resources]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/master'
     permissions:
       contents: write
@@ -232,7 +232,7 @@ jobs:
     name: Upload Release
 
     needs: [build, pack-resources]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     if: github.event_name == 'release' && github.event.action == 'published'
     permissions:
       contents: write
